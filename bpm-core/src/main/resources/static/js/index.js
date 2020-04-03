@@ -6,6 +6,7 @@ $(function () {
         restore: eval("(" + flowJson + ")"),
         tools: {
             save: function (data) {
+                console.log(data);
                 var flowDesignMsg = {
                     "flowId": "4ce08c32bcbab235fc6e6276e21b4f38",
                     "flowJson": data

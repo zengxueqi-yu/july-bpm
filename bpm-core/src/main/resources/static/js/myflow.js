@@ -776,7 +776,7 @@
     };
 
     myflow.path = function (o, r, from, to, guid, ec, dots, id) {
-        var pathId =  generateUUID();//myflow.util.nextId();
+        var pathId = generateUUID();//myflow.util.nextId();
         var _this = this, _r = r, _o = $.extend(true, {}, myflow.config.path), _path, _markpath, _arrow, _text,
             _textPos = _o.text.textPos, _ox, _oy, _from = from, _to = to, _id = id || 'path'
             + pathId, _dotList, _autoText = true;
@@ -1400,6 +1400,7 @@
             };
             this.destroy = function () {
                 $('#' + _div + ' input').each(function () {
+                    alert("测试属性" + $(this).val());
                     _props[_k].value = $(this).val();
                     $(_r).trigger('textchange', [$(this).val(), _src]);
                 });
