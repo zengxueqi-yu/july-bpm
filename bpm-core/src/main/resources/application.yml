@@ -1,0 +1,20 @@
+server:
+  port: 6112
+
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    name: ownDataSource
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://192.168.3.99/bpm_flow?useSSL=false&useUnicode=true&serverTimezone=Asia/Shanghai
+      username: root
+      password: root
+      initial-size: 1
+      max-active: 20
+  tomcat:
+    uri-encoding: UTF-8
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
