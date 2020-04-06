@@ -20,16 +20,8 @@ public class SaveFlowTaskNodeDto implements Serializable {
      */
     private String flowId;
     /**
-     * 节点id
+     * 节点信息
      */
-    private String nodeId;
-    /**
-     * 节点标识（start，state，end）
-     */
-    private String nodeType;
-    /**
-     * 节点名称
-     */
-    private String nodeName;
+    private SaveNodeDto nodeDto;
 
 }

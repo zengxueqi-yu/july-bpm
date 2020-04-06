@@ -20,7 +20,7 @@ public class MyConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/static/**")
                 .addResourceLocations("classpath:/static/");
         registry.addResourceHandler("/favicon.ico")
-                .addResourceLocations("classpath:/static/images/favicon.ico");
+                .addResourceLocations("classpath:/static/flow/img/favicon.ico");
         WebMvcConfigurer.super.addResourceHandlers(registry);
     }
 

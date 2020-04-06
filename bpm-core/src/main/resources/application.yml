@@ -7,13 +7,16 @@ spring:
     name: ownDataSource
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://192.168.3.99/bpm_flow?useSSL=false&useUnicode=true&serverTimezone=Asia/Shanghai
+      url: jdbc:mysql://localhost/bpm_flow?useSSL=false&useUnicode=true&serverTimezone=Asia/Shanghai
       username: root
-      password: root
+      password: 123456
       initial-size: 1
       max-active: 20
   tomcat:
     uri-encoding: UTF-8
+
+  thymeleaf:
+    cache: false
 
 mybatis-plus:
   configuration:

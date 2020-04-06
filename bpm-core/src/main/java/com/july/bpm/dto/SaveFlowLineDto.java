@@ -31,5 +31,9 @@ public class SaveFlowLineDto implements Serializable {
      * 结束节点id
      */
     private String endNodeId;
+    /**
+     * 连线名称
+     */
+    private String pathName;
 
 }

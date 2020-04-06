@@ -16,12 +16,12 @@ public class SaveFlowDesignDto implements Serializable {
     private static final long serialVersionUID = 1945649961122691638L;
 
     /**
-     * 流程图信息
-     */
-    private String flowJson;
-    /**
      * 流程id
      */
     private String flowId;
+    /**
+     * 流程图信息
+     */
+    private String flowJson;
 
 }

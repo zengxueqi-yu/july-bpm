@@ -1,0 +1,409 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link type="text/css" href="../static/flow/lib/jquery-ui-1.8.4.custom/css/smoothness/jquery-ui-1.8.4.custom.css"
+          rel="stylesheet"/>
+
+    <script type="text/javascript" src="../static/flow/lib/raphael-min.js"></script>
+    <script type="text/javascript" src="../static/flow/lib/jquery-ui-1.8.4.custom/js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript"
+            src="../static/flow/lib/jquery-ui-1.8.4.custom/js/jquery-ui-1.8.4.custom.min.js"></script>
+    <script type="text/javascript" src="../static/flow/js/myflow.js"></script>
+    <script type="text/javascript" src="../static/flow/js/myflow.jpdl4.js"></script>
+    <script type="text/javascript" src="../static/flow/js/myflow.editors.js"></script>
+    <!--<script type="text/javascript" src="../static/flow/js/index.js"></script>-->
+    <script type="text/javascript">
+        $(function () {
+            var flowJson = getFlowDesign();
+            $('#myflow').myflow({
+                basePath: "",
+                restore: eval("(" + flowJson + ")"),
+                tools: {
+                    save: {
+                        onclick: function (data) {
+                            var flowJson = eval("(" + data + ")");
+                            var node = eval(flowJson.states);
+                            var nodeData = "";
+                            $.each(node, function (i, v) {
+                                if (node[i].type == 'start' || node[i].type == 'join') {
+                                    nodeData += '{' +
+                                        '"nodeId":"' + i.substring(4, i.length) + '"'
+                                        + ',"nodeType":"' + node[i].type + '"'
+                                        + ',"nodeDesc":"' + node[i].props.temp1.value + '"'
+                                        + ',"nodeJudge":"' + node[i].props.temp2.value + '"'
+                                        + ',"nodeName":"' + node[i].text.text + '"},';
+                                } else if (node[i].type == 'task') {
+                                    nodeData += '{' +
+                                        '"nodeId":"' + i.substring(4, i.length) + '"'
+                                        + ',"nodeType":"' + node[i].type + '"'
+                                        + ',"nodeWorker":"' + node[i].props.assignee.value + '"'
+                                        + ',"nodeForm":"' + node[i].props.form.value + '"'
+                                        + ',"nodeDesc":"' + node[i].props.desc.value + '"'
+                                        + ',"nodeName":"' + node[i].text.text + '"},';
+                                }
+                            });
+                            if (nodeData != "") {
+                                nodeData = "[" + nodeData.trimEnd(",") + "]";
+                            }
+                            //console.log(nodeData);
+
+                            var path = eval(flowJson.paths);
+                            var pathData = "";
+                            $.each(path, function (i, v) {
+                                pathData += '{' +
+                                    '"flowLineId":"' + i.substring(4, i.length) + '"'
+                                    + ',"startNodeId":"' + path[i].from.substring(4, path[i].from.length) + '"'
+                                    + ',"endIdNodeId":"' + path[i].to.substring(4, path[i].to.length) + '"'
+                                    + ',"pathName":"' + path[i].text.text + '"},';
+                            });
+                            if (pathData != "") {
+                                pathData = "[" + pathData.trimEnd(",") + "]";
+                            }
+                            console.log(pathData);
+
+                            var flowDesignMsg = {
+                                "flowId": "4ce08c32bcbab235fc6e6276e21b4f38",
+                                "flowJson": data,
+                                "flowTaskNodeDtos": JSON.parse(nodeData),
+                                "flowLineDtos": JSON.parse(pathData)
+                            }
+                            $.ajax({
+                                url: '/flowDesign/saveFlowDesign',
+                                type: 'post',
+                                dataType: 'json',
+                                contentType: "application/json;charset=utf-8",//这个参数也是header参数
+                                data: JSON.stringify(flowDesignMsg),
+                                cache: false,
+                                success: function (res) {
+                                    createWebFlow(getFlowDesign())
+                                }
+                            });
+                        }
+                    },
+                    publish: {
+                        onclick: function (data) {
+                            console.log("发布", eval("(" + data + ")"));
+                        }
+                    },
+                    addPath: {
+                        onclick: function (id, data) {
+                            console.log("添加连接线", id, eval("(" + data + ")"));
+                            var node = eval("(" + data + ")");
+                            var lineMsg = {
+                                "flowId": "4ce08c32bcbab235fc6e6276e21b4f38",
+                                "flowLineId": id.substring(4, id.length),
+                                "startNodeId": node.from.substring(4, node.from.length),
+                                "endNodeId": node.to.substring(4, node.to.length)
+                            }
+                            $.ajax({
+                                url: '/flowLine/saveFlowLine',
+                                type: 'post',
+                                dataType: 'json',
+                                contentType: "application/json;charset=utf-8",//这个参数也是header参数
+                                data: JSON.stringify(lineMsg),
+                                cache: false,
+                                success: function (res) {
+                                }
+                            });
+                        }
+                    },
+                    addRect: {
+                        onclick: function (id, data) {
+                            console.log("添加状态", id, eval("(" + data + ")"));
+                            var node = eval("(" + data + ")");
+                            var nodeMsg = {
+                                "flowId": "4ce08c32bcbab235fc6e6276e21b4f38",
+                                "nodeId": id.substring(4, id.length),
+                                "nodeName": node.text.text,
+                                "nodeType": node.type
+                            }
+                            /*$.ajax({
+                                url: '/flowTaskNode/saveFlowTaskNode',
+                                type: 'post',
+                                dataType: 'json',
+                                contentType: "application/json;charset=utf-8",//这个参数也是header参数
+                                data: JSON.stringify(nodeMsg),
+                                cache: false,
+                                success: function (res) {
+                                    if (res.code == '-1') {
+                                        alert(JSON.stringify(res.data));
+                                    }
+                                }
+                            });*/
+                        }
+                    },
+                    clickPath: {
+                        onclick: function (id) {
+                            console.log("点击线", id)
+                        }
+                    },
+                    clickRect: {
+                        onclick: function (id, data) {
+                            console.log("点击状态", id, eval("(" + data + ")"));
+                        }
+                    },
+                    deletePath: {
+                        onclick: function (id) {
+                            //console.log("删除连线",id);
+                            var lineMsg = {
+                                "flowLineId": id.substring(4, id.length)
+                            }
+                            $.ajax({
+                                url: '/flowLine/deleteFlowLine',
+                                type: 'post',
+                                dataType: 'json',
+                                contentType: "application/json;charset=utf-8",//这个参数也是header参数
+                                data: JSON.stringify(lineMsg),
+                                cache: false,
+                                success: function (res) {
+                                }
+                            });
+                        }
+                    },
+                    deleteRect: {
+                        onclick: function (id, data) {
+                            //console.log("删除节点",data);
+                            var nodeMsg = {
+                                "flowId": "4ce08c32bcbab235fc6e6276e21b4f38",
+                                "nodeId": id.substring(4, id.length)
+                            }
+                            $.ajax({
+                                url: '/flowTaskNode/deleteFlowTaskNode',
+                                type: 'post',
+                                dataType: 'json',
+                                async: false, // 同步
+                                contentType: "application/json;charset=utf-8",//这个参数也是header参数
+                                data: JSON.stringify(nodeMsg),
+                                cache: false,
+                                success: function (res) {
+                                    if (res.code == '-1') {
+                                        alert(JSON.stringify(res.data));
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    updateNode: {
+                        onclick: function (id, data) {
+                            console.log("更新节点信息", id, data);
+                        }
+                    },
+                    saveProperty: {
+                        onclick: function (nodeId,nodeType,nodeData) {
+                            console.log("节点id",nodeId);
+                            console.log("节点类型",nodeType);
+                            console.log("节点信息",nodeData);
+                        }
+                    },
+                    revoke: {
+                        onclick: function (id) {
+
+                        }
+                    }
+                }
+            });
+
+            function getFlowDesign() {
+                var flowJson = "{states:{rect1585875230378:{type:'start',ID:'',text:{text:'开始'}, attr:{ x:237, y:156, width:50, height:50}},rect1585875231944:{type:'state',ID:'',text:{text:'状态'}, attr:{ x:187, y:291, width:100, height:50}},rect1585875239753:{type:'state',ID:'',text:{text:'状态'}, attr:{ x:197, y:428, width:100, height:50}},rect1585875242464:{type:'end',ID:'',text:{text:'结束'}, attr:{ x:211, y:539, width:50, height:50}}},paths:{path1585875253537:{lineID:'',from:'rect1585875230378',to:'rect1585875231944', dots:[],text:{text:'',textPos:{x:0,y:-10}}, props:{text:{value:''}}},path1585875255768:{lineID:'',from:'rect1585875231944',to:'rect1585875239753', dots:[],text:{text:'',textPos:{x:0,y:-10}}, props:{text:{value:''}}},path1585875257505:{lineID:'',from:'rect1585875239753',to:'rect1585875242464', dots:[],text:{text:'',textPos:{x:0,y:-10}}, props:{text:{value:''}}}}}";
+                var flowDesign = {
+                    "flowId": "4ce08c32bcbab235fc6e6276e21b4f38"
+                }
+                $.ajax({
+                    url: '/flowDesign/getFlowDesign',
+                    type: 'post',
+                    dataType: 'json',
+                    async: false, // 同步
+                    contentType: "application/json;charset=utf-8",//这个参数也是header参数
+                    data: JSON.stringify(flowDesign),
+                    cache: false,
+                    success: function (res) {
+                        flowJson = res.data.flowJson;
+                    }
+                });
+                return flowJson;
+            }
+
+            function createWebFlow(flowJson) {
+                $('#myflow').empty();
+                $('#myflow').myflow({
+                    basePath: "",
+                    restore: eval("(" + flowJson + ")"),
+                    tools: {
+                        save: {
+                            onclick: function (data) {
+                                var flowDesignMsg = {
+                                    "flowId": "4ce08c32bcbab235fc6e6276e21b4f38",
+                                    "flowJson": data
+                                }
+                                $.ajax({
+                                    url: '/flowDesign/saveFlowDesign',
+                                    type: 'post',
+                                    dataType: 'json',
+                                    contentType: "application/json;charset=utf-8",//这个参数也是header参数
+                                    data: JSON.stringify(flowDesignMsg),
+                                    cache: false,
+                                    success: function (res) {
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+
+            String.prototype.trimEnd = function (c) {
+                if (c == null || c == "") {
+                    var str = this;
+                    var rg = /s/;
+                    var i = str.length;
+                    while (rg.test(str.charAt(--i))) ;
+                    return str.slice(0, i + 1);
+                } else {
+                    var str = this;
+                    var rg = new RegExp(c);
+                    var i = str.length;
+                    while (rg.test(str.charAt(--i))) ;
+                    return str.slice(0, i + 1);
+                }
+            }
+        });
+    </script>
+    <script type="text/javascript">
+
+    </script>
+    <style type="text/css">
+        body {
+            margin: 0;
+            pading: 0;
+            text-align: left;
+            font-family: Arial, sans-serif, Helvetica, Tahoma;
+            font-size: 12px;
+            line-height: 1.5;
+            color: black;
+            background-image: url(../static/flow/img/bg.png);
+        }
+
+        .node {
+            width: 70px;
+            text-align: center;
+            vertical-align: middle;
+            border: 1px solid #fff;
+        }
+
+        .mover {
+            border: 1px solid #ddd;
+            background-color: #ddd;
+        }
+
+        .selected {
+            background-color: #ddd;
+        }
+
+        .state {
+
+        }
+
+        #myflow_props table {
+
+        }
+
+        #myflow_props th {
+            letter-spacing: 2px;
+            text-align: left;
+            padding: 6px;
+            background: #ddd;
+        }
+
+        #myflow_props td {
+            background: #fff;
+            padding: 6px;
+        }
+
+        #pointer {
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        #path {
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        #task {
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        #state {
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
+<div id="myflow_tools"
+     style="position: absolute; top: 10; left: 10; background-color: #fff; width: 70px; cursor: default; padding: 3px;"
+     class="ui-widget-content">
+    <div id="myflow_tools_handle" style="text-align: center;"
+         class="ui-widget-header">工具集
+    </div>
+
+
+    <div class="node" id="myflow_save"><img src="../static/flow/img/save.gif"/>&nbsp;&nbsp;保存</div>
+    <div>
+        <hr/>
+    </div>
+    <div class="node selectable" id="pointer"><img
+            src="../static/flow/img/select16.gif"/>&nbsp;&nbsp;选择
+    </div>
+    <div class="node selectable" id="path"><img
+            src="../static/flow/img/16/flow_sequence.png"/>&nbsp;&nbsp;转换
+    </div>
+    <div>
+        <hr/>
+    </div>
+    <div class="node state" id="start" type="start"><img
+            src="../static/flow/img/16/start_event_empty.png"/>&nbsp;&nbsp;开始
+    </div>
+    <div class="node state" id="state" type="state"><img
+            src="../static/flow/img/16/task_empty.png"/>&nbsp;&nbsp;状态
+    </div>
+    <div class="node state" id="task" type="task"><img
+            src="../static/flow/img/16/task_empty.png"/>&nbsp;&nbsp;任务
+    </div>
+    <div class="node state" id="fork" type="fork"><img
+            src="../static/flow/img/16/gateway_parallel.png"/>&nbsp;&nbsp;分支
+    </div>
+    <div class="node state" id="join" type="join"><img
+            src="../static/flow/img/16/gateway_parallel.png"/>&nbsp;&nbsp;合并
+    </div>
+    <div class="node state" id="end" type="end"><img
+            src="../static/flow/img/16/end_event_terminate.png"/>&nbsp;&nbsp;结束
+    </div>
+    <div class="node state" id="end-cancel" type="end-cancel"><img
+            src="../static/flow/img/16/end_event_cancel.png"/>&nbsp;&nbsp;取消
+    </div>
+    <div class="node state" id="end-error" type="end-error"><img
+            src="../static/flow/img/16/end_event_error.png"/>&nbsp;&nbsp;错误
+    </div>
+</div>
+
+<div id="myflow_props"
+     style="position: absolute; top: 30; right: 50; background-color: #fff; width: 220px; padding: 3px;"
+     class="ui-widget-content">
+    <div id="myflow_props_handle" class="ui-widget-header">属性</div>
+    <table border="1" width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+            <td>aaa</td>
+        </tr>
+        <tr>
+            <td>aaa</td>
+        </tr>
+    </table>
+    <div>&nbsp;</div>
+</div>
+
+<div id="myflow"></div>
+</body>
+</html>

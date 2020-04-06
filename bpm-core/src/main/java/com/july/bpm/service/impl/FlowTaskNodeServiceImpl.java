@@ -3,6 +3,7 @@ package com.july.bpm.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.july.bpm.dto.DeleteFlowTaskNodeDto;
 import com.july.bpm.dto.SaveFlowTaskNodeDto;
+import com.july.bpm.dto.SaveNodeDto;
 import com.july.bpm.entity.FlowTaskNode;
 import com.july.bpm.entity.enums.EnableEnum;
 import com.july.bpm.exception.BnException;
@@ -10,6 +11,7 @@ import com.july.bpm.mapper.FlowTasknodeMapper;
 import com.july.bpm.service.FlowTaskNodeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 /**
  * 服务实现类
@@ -31,10 +33,18 @@ public class FlowTaskNodeServiceImpl extends ServiceImpl<FlowTasknodeMapper, Flo
     public void saveFlowTaskNode(SaveFlowTaskNodeDto saveFlowTaskNodeDto) {
         FlowTaskNode flowTaskNode = new FlowTaskNode();
         flowTaskNode.setFlowId(saveFlowTaskNodeDto.getFlowId());
-        flowTaskNode.setId(saveFlowTaskNodeDto.getNodeId());
-        flowTaskNode.setNodeName(saveFlowTaskNodeDto.getNodeName());
-        flowTaskNode.setNodeType(saveFlowTaskNodeDto.getNodeType());
+
+        SaveNodeDto saveNodeDto = saveFlowTaskNodeDto.getNodeDto();
+
+        flowTaskNode.setId(saveNodeDto.getNodeId());
+        flowTaskNode.setNodeName(saveNodeDto.getNodeName());
+        flowTaskNode.setNodeType(saveNodeDto.getNodeType());
         flowTaskNode.setCheckType("1");
+
+        if(!CollectionUtils.isEmpty(saveNodeDto.getNodeProperty())){
+
+        }
+
         this.save(flowTaskNode);
     }
 

@@ -31,6 +31,11 @@ public class FlowTaskNode extends BaseEntity implements Serializable {
     @TableField("flowId")
     private String flowId;
 
+    /**
+     * 流程审核组id，用户查询该节点的所有审核人
+     */
+    private String approveGroupId;
+
     @TableField("nodeName")
     private String nodeName;
 

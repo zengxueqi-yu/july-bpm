@@ -12,9 +12,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class IndexController {
 
-    @GetMapping("/bpm")
-    public String index(){
-        return "index";
+    @GetMapping("/myflow")
+    public String myflow(){
+        return "myflow";
+    }
+
+    @GetMapping("/gooflow")
+    public String gooflow(){
+        return "gooflow";
+    }
+
+    @GetMapping("/flow")
+    public String flow(){
+        return "flow";
     }
 
 }

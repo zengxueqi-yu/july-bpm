@@ -32,6 +32,7 @@ public class FlowDesignController {
      */
     @PostMapping("/saveFlowDesign")
     public ApiResult<String> saveFlowDesign(@RequestBody SaveFlowDesignDto saveFlowDesignDto){
+        System.out.println("流程图保存信息 ===> " + saveFlowDesignDto);
         flowDesignService.saveFlowDesign(saveFlowDesignDto);
         return ApiResult.ok("操作成功！");
     }
