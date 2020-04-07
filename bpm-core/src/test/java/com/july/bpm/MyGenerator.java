@@ -238,7 +238,7 @@ public class MyGenerator {
         } catch (Exception e) {
             e.printStackTrace();
         }*/
-        String[] tableName = {"bpm_flow_approve_group"};
+        String[] tableName = {"bpm_flow_form","bpm_flow_form_group"};
         return tableName;
     }
 

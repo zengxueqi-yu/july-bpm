@@ -11,7 +11,7 @@
  Target Server Version : 50728
  File Encoding         : 65001
 
- Date: 06/04/2020 22:13:10
+ Date: 07/04/2020 22:37:37
 */
 
 SET NAMES utf8mb4;
@@ -52,7 +52,7 @@ CREATE TABLE `bpm_flow_approve_group` (
   `updateTime` bigint(20) DEFAULT '0' COMMENT '数据的修改时间戳单位秒.',
   `deleted` tinyint(4) DEFAULT '0' COMMENT '逻辑删除标志1删除0未删除',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='流程节点审核组（审核人）';
 
 -- ----------------------------
 -- Records of bpm_flow_approve_group
@@ -125,6 +125,45 @@ CREATE TABLE `bpm_flow_design` (
 -- ----------------------------
 BEGIN;
 INSERT INTO `bpm_flow_design` VALUES ('fb1d1770f10eefbf081bcec3cd5d6b54', '4ce08c32bcbab235fc6e6276e21b4f38', '{states:{rect270cc395ea6f4986833b7d504b7d2ced:{type:\'start\',text:{text:\'开始\'}, attr:{ x:409, y:10, width:50, height:50}, props:{text:{value:\'开始\'},temp1:{value:\'31231\'},temp2:{value:\'\'}}},rect3852579782a94f189c76fdc4a27300d5:{type:\'task\',text:{text:\'行政登记\'}, attr:{ x:386, y:116, width:100, height:50}, props:{text:{value:\'行政登记\'},assignee:{value:\'曾雪琪\'},form:{value:\'曾雪琪\'},desc:{value:\'曾雪琪\'}}},rect7b55aa13fcf949548e9fa7b28515698e:{type:\'fork\',text:{text:\'分支\'}, attr:{ x:410, y:209, width:50, height:50}, props:{text:{value:\'分支\'},temp1:{value:\'\'},temp2:{value:\'\'}}},rect07537dc026be40eea907537554333636:{type:\'task\',text:{text:\'部门经理审核\'}, attr:{ x:192, y:317, width:100, height:50}, props:{text:{value:\'部门经理审核\'},assignee:{value:\'\'},form:{value:\'\'},desc:{value:\'\'}}},rect3dbd7d6b2fbb4ffc92c61cf76c8ea1b0:{type:\'task\',text:{text:\'项目总监批准\'}, attr:{ x:385, y:317, width:100, height:50}, props:{text:{value:\'项目总监批准\'},assignee:{value:\'\'},form:{value:\'\'},desc:{value:\'\'}}},rect51dae99bfafc42c3b6759bb9620de653:{type:\'task\',text:{text:\'总经理审核\'}, attr:{ x:556, y:320, width:100, height:50}, props:{text:{value:\'总经理审核\'},assignee:{value:\'\'},form:{value:\'\'},desc:{value:\'\'}}},rectab880b8366744646848feccc446cfff2:{type:\'join\',text:{text:\'合并\'}, attr:{ x:410, y:416, width:50, height:50}, props:{text:{value:\'合并\'},temp1:{value:\'\'},temp2:{value:\'\'}}},rect2c4c83074e7b478fbe3257d993cf764b:{type:\'end\',text:{text:\'结束\'}, attr:{ x:409, y:633, width:50, height:50}, props:{text:{value:\'结束\'},temp1:{value:\'\'},temp2:{value:\'\'}}},rectaf587229d8104a47802b6bd6d3c77f62:{type:\'task\',text:{text:\'总裁批准\'}, attr:{ x:384, y:528, width:100, height:50}, props:{text:{value:\'总裁批准\'},assignee:{value:\'\'},form:{value:\'\'},desc:{value:\'\'}}}},paths:{path17b380d97bd444799b04d3ee444c7220:{from:\'rect270cc395ea6f4986833b7d504b7d2ced\',to:\'rect3852579782a94f189c76fdc4a27300d5\', dots:[],text:{text:\'TO 任务1\'},textPos:{x:37,y:-4}, props:{text:{value:\'\'}}},pathe3ef1284df33409aa70040bb0d065318:{from:\'rect3852579782a94f189c76fdc4a27300d5\',to:\'rect7b55aa13fcf949548e9fa7b28515698e\', dots:[],text:{text:\'TO 分支\'},textPos:{x:56,y:-1}, props:{text:{value:\'\'}}},path3a2b6d1ce2574287a8e6a1ebe338eccc:{from:\'rect7b55aa13fcf949548e9fa7b28515698e\',to:\'rect3dbd7d6b2fbb4ffc92c61cf76c8ea1b0\', dots:[],text:{text:\'TO 任务3\'},textPos:{x:24,y:-5}, props:{text:{value:\'\'}}},path85536d4f8908486b9e275ad7135bb6af:{from:\'rect3dbd7d6b2fbb4ffc92c61cf76c8ea1b0\',to:\'rectab880b8366744646848feccc446cfff2\', dots:[],text:{text:\'TO 合并\'},textPos:{x:41,y:8}, props:{text:{value:\'\'}}},path30a18258288c4f1385107a79d8d7f387:{from:\'rectab880b8366744646848feccc446cfff2\',to:\'rectaf587229d8104a47802b6bd6d3c77f62\', dots:[],text:{text:\'TO 任务5\'},textPos:{x:36,y:-5}, props:{text:{value:\'\'}}},path6fa2e6e2780e40da8782cde15fd8dc76:{from:\'rectaf587229d8104a47802b6bd6d3c77f62\',to:\'rect2c4c83074e7b478fbe3257d993cf764b\', dots:[],text:{text:\'TO 结束\'},textPos:{x:32,y:0}, props:{text:{value:\'\'}}},pathff540a550d864efda1b04a1b8f8518eb:{from:\'rect7b55aa13fcf949548e9fa7b28515698e\',to:\'rect07537dc026be40eea907537554333636\', dots:[{x:244,y:232}],text:{text:\'TO 任务2\'},textPos:{x:0,y:-10}, props:{text:{value:\'TO 任务2\'}}},path7dd08df8b5994a4ead1ad6f1be04e09f:{from:\'rect07537dc026be40eea907537554333636\',to:\'rectab880b8366744646848feccc446cfff2\', dots:[{x:242,y:435}],text:{text:\'TO 合并\'},textPos:{x:-3,y:17}, props:{text:{value:\'TO 合并\'}}},pathe776a5c7bb484c0d86e2b94b046c34c0:{from:\'rect7b55aa13fcf949548e9fa7b28515698e\',to:\'rect51dae99bfafc42c3b6759bb9620de653\', dots:[{x:607,y:234}],text:{text:\'TO 任务4\'},textPos:{x:0,y:-10}, props:{text:{value:\'TO 任务4\'}}},path959a9842a8834e1b9cc92e8a1185984a:{from:\'rect51dae99bfafc42c3b6759bb9620de653\',to:\'rectab880b8366744646848feccc446cfff2\', dots:[{x:607,y:439}],text:{text:\'TO 合并\'},textPos:{x:-8,y:16}, props:{text:{value:\'TO 合并\'}}}},props:{props:{name:{value:\'员工入职申请\'},key:{value:\'\'},desc:{value:\'\'}}}}', NULL, NULL, 1585988503, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for bpm_flow_form
+-- ----------------------------
+DROP TABLE IF EXISTS `bpm_flow_form`;
+CREATE TABLE `bpm_flow_form` (
+  `id` varchar(32) NOT NULL COMMENT '表单id',
+  `formType` varchar(255) DEFAULT NULL COMMENT '表单类型',
+  `formJson` text COMMENT '表单信息',
+  `createTime` bigint(20) DEFAULT NULL,
+  `updateTime` bigint(20) DEFAULT NULL,
+  `deleted` int(5) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='流程表单信息';
+
+-- ----------------------------
+-- Records of bpm_flow_form
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for bpm_flow_form_group
+-- ----------------------------
+DROP TABLE IF EXISTS `bpm_flow_form_group`;
+CREATE TABLE `bpm_flow_form_group` (
+  `id` varchar(32) NOT NULL COMMENT '流程表单组id',
+  `formId` varchar(32) DEFAULT NULL COMMENT '流程表单id',
+  `createTime` bigint(20) DEFAULT NULL,
+  `updateTime` bigint(20) DEFAULT NULL,
+  `deleted` int(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='流程表单组=>对应每个节点';
+
+-- ----------------------------
+-- Records of bpm_flow_form_group
+-- ----------------------------
+BEGIN;
 COMMIT;
 
 -- ----------------------------
@@ -398,6 +437,26 @@ INSERT INTO `bpm_flow_transition` VALUES ('83cd08c97e74fc726739a572bfd5cddb', '4
 INSERT INTO `bpm_flow_transition` VALUES ('98ced9c3294e1414a426b65a5740f93c', '4ce08c32bcbab235fc6e6276e21b4f38', '826f7a5902d345ebb8503cad76e2225d', '', '', NULL, 'ec7ebcdb8a4d48b6930fff8f5f5b71bc', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `bpm_flow_transition` VALUES ('b2deb373c22e991575ec2c8cfff09558', '4ce08c32bcbab235fc6e6276e21b4f38', '826f7a5902d345ebb8503cad76e2225d', '', '', NULL, '182d1a6a0b4643cea62129f79d471974', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `bpm_flow_transition` VALUES ('f807ade891c26837676eea6dc57d6c60', '4ce08c32bcbab235fc6e6276e21b4f38', 'cf72774d3ea74a9aa9455be5bf084062', '', '', NULL, 'a94f1f0101df41599ad87acc2c4899f4', NULL, NULL, NULL, NULL, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for bpm_flow_zdine
+-- ----------------------------
+DROP TABLE IF EXISTS `bpm_flow_zdine`;
+CREATE TABLE `bpm_flow_zdine` (
+  `id` varchar(32) DEFAULT NULL COMMENT '自定义表id',
+  `tableName` varchar(255) DEFAULT NULL COMMENT '表名',
+  `desc` varchar(1000) DEFAULT NULL COMMENT '备注',
+  `tableAlias` varchar(255) DEFAULT NULL COMMENT '表别名',
+  `createTime` bigint(20) DEFAULT NULL,
+  `updateTime` bigint(20) DEFAULT NULL,
+  `deleted` int(5) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of bpm_flow_zdine
+-- ----------------------------
+BEGIN;
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
