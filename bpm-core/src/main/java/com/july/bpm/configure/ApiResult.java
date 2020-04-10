@@ -131,4 +131,5 @@ public class ApiResult<T> implements Serializable {
     public static ApiResult fail() {
         return fail( ApiCode.FAIL );
     }
+    
 }

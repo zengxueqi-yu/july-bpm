@@ -38,6 +38,11 @@
             img: {src: '../static/flow/img/48/start_event_empty.png', width: 48, height: 48},
             attr: {width: 50, heigth: 50},
             props: {
+                node: {
+                    name: 'node', label: '节点', value: '', editor: function () {
+                        return new myflow.editors.nodeEditor();
+                    }, value: '节点'
+                },
                 text: {
                     name: 'text', label: '显示', value: '', editor: function () {
                         return new myflow.editors.textEditor();
@@ -62,6 +67,11 @@
             img: {src: '../static/flow/img/48/end_event_terminate.png', width: 48, height: 48},
             attr: {width: 50, heigth: 50},
             props: {
+                node: {
+                    name: 'node', label: '节点', value: '', editor: function () {
+                        return new myflow.editors.nodeEditor();
+                    }, value: '节点'
+                },
                 text: {
                     name: 'text', label: '显示', value: '', editor: function () {
                         return new myflow.editors.textEditor();
@@ -86,6 +96,11 @@
             img: {src: '../static/flow/img/48/end_event_cancel.png', width: 48, height: 48},
             attr: {width: 50, heigth: 50},
             props: {
+                node: {
+                    name: 'node', label: '节点', value: '', editor: function () {
+                        return new myflow.editors.nodeEditor();
+                    }, value: '节点'
+                },
                 text: {
                     name: 'text', label: '显示', value: '', editor: function () {
                         return new myflow.editors.textEditor();
@@ -110,6 +125,11 @@
             img: {src: '../static/flow/img/48/end_event_error.png', width: 48, height: 48},
             attr: {width: 50, heigth: 50},
             props: {
+                node: {
+                    name: 'node', label: '节点', value: '', editor: function () {
+                        return new myflow.editors.nodeEditor();
+                    }, value: '节点'
+                },
                 text: {
                     name: 'text', label: '显示', value: '', editor: function () {
                         return new myflow.editors.textEditor();
@@ -133,6 +153,11 @@
             text: {text: '状态'},
             img: {src: '../static/flow/img/48/task_empty.png', width: 48, height: 48},
             props: {
+                node: {
+                    name: 'node', label: '节点', value: '', editor: function () {
+                        return new myflow.editors.nodeEditor();
+                    }, value: '节点'
+                },
                 text: {
                     name: 'text', label: '显示', value: '', editor: function () {
                         return new myflow.editors.textEditor();
@@ -157,6 +182,11 @@
             img: {src: '../static/flow/img/48/gateway_parallel.png', width: 48, height: 48},
             attr: {width: 50, heigth: 50},
             props: {
+                node: {
+                    name: 'node', label: '节点', value: '', editor: function () {
+                        return new myflow.editors.nodeEditor();
+                    }, value: '节点'
+                },
                 text: {
                     name: 'text', label: '显示', value: '', editor: function () {
                         return new myflow.editors.textEditor();
@@ -181,6 +211,11 @@
             img: {src: '../static/flow/img/48/gateway_parallel.png', width: 48, height: 48},
             attr: {width: 50, heigth: 50},
             props: {
+                node: {
+                    name: 'node', label: '节点', value: '', editor: function () {
+                        return new myflow.editors.nodeEditor();
+                    }, value: '节点'
+                },
                 text: {
                     name: 'text', label: '显示', value: '', editor: function () {
                         return new myflow.editors.textEditor();

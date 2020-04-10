@@ -39,7 +39,7 @@ public enum ApiCode {
      */
     SYSTEM_EXCEPTION("5000", "系统异常,请联系管理员"),
     /**
-     * 请求参数娇艳异常
+     * 请求参数校验异常
      */
     PARAMETER_EXCEPTION("5001", "请求参数校验异常"),
     /**

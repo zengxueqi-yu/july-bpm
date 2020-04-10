@@ -8,5 +8,8 @@
     <artifactId>julybpm</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <modules>
+        <module>bpm-core</module>
+    </modules>
 
 </project>

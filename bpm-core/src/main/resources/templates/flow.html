@@ -13,7 +13,6 @@
     <script type="text/javascript" src="../static/flow/js/myflow.js"></script>
     <script type="text/javascript" src="../static/flow/js/myflow.jpdl4.js"></script>
     <script type="text/javascript" src="../static/flow/js/myflow.editors.js"></script>
-    <!--<script type="text/javascript" src="../static/flow/js/index.js"></script>-->
     <script type="text/javascript">
         $(function () {
             var flowJson = getFlowDesign();
@@ -23,7 +22,6 @@
                 tools: {
                     save: {
                         onclick: function (data) {
-                            var flowJson = eval("(" + data + ")");
                             var flowDesignMsg = {
                                 "flowId": "4ce08c32bcbab235fc6e6276e21b4f38",
                                 "flowJson": data,
@@ -78,7 +76,7 @@
                                 "nodeName": node.text.text,
                                 "nodeType": node.type
                             }
-                            /*$.ajax({
+                            $.ajax({
                                 url: '/flowTaskNode/saveFlowTaskNode',
                                 type: 'post',
                                 dataType: 'json',
@@ -90,7 +88,7 @@
                                         alert(JSON.stringify(res.data));
                                     }
                                 }
-                            });*/
+                            });
                         }
                     },
                     clickPath: {

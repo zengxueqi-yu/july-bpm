@@ -1,4 +1,6 @@
 (function (b) {
+    var ignoreNode = "start,fork,path,end";
+
     function generateUUID() {
         var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('')
         var uuid = new Array(36),
@@ -71,7 +73,7 @@
         },
         props: {attr: {top: 10, right: 30}, props: {}},
         restore: "",
-        activeRects: {rects: [], rectAttr: {stroke: "#ff0000", "stroke-width": 2}},
+        activeRects: {rects: [], stateId: [], rectAttr: {stroke: "#ff0000", "stroke-width": 2}},
         historyRects: {rects: [], pathAttr: {path: {stroke: "#00ff00"}, arrow: {stroke: "#00ff00", fill: "#00ff00"}}}
     };
     a.util = {
@@ -132,8 +134,9 @@
             return [k, {x: e, y: j}, {x: c, y: i}]
         }
     };
-    a.rect = function (p, m) {
+    a.rect = function (p, m, s) {
         var UUID = generateUUID(); //a.util.nextId()
+        var stateId = s;
         var u = this, g = "rect" + UUID, E = b.extend(true, {}, a.config.rect, p), C = m, t, e, n, f, x, v;
         t = C.rect(E.attr.x, E.attr.y, E.attr.width, E.attr.height, E.attr.r).hide().attr(E.attr);
         e = C.image(a.config.basePath + E.img.src, E.attr.x + E.img.width / 2, E.attr.y + (E.attr.height - E.img.height) / 2, E.img.width, E.img.height).hide();
@@ -312,6 +315,9 @@
                 return
             }
             w();
+            var nodeId = stateId.substring(4, stateId.length);
+            a.config.activeRects.stateId.push(nodeId);
+            a.config.tools.clickRect.onclick(nodeId, u.toJson());
             var o = b(C).data("mod");
             switch (o) {
                 case"pointer":
@@ -325,8 +331,6 @@
             }
             b(C).trigger("click", u);
             b(C).data("currNode", u);
-            a.config.activeRects.rects.push(u.getId());
-            a.config.tools.clickRect.onclick(u.getId(), u.toJson());
             a.editors.selectEditor(g.substring(4, g.length));
             return false
         });
@@ -344,7 +348,6 @@
         b(C).bind("click", j);
         var c = function (o, F, r) {
             if (r.getId() == g) {
-                //alert("修改显示属性时执行" + r.getId());
                 f.attr({text: F})
             }
         };
@@ -842,45 +845,57 @@
     a.props = function (h, f) {
         var j = this, i,
             c = b("#myflow_props").hide().draggable({handle: "#myflow_props_handle"}).resizable().css(a.config.props.attr).bind("change", function () {
-                var nodeMsg = eval("(" + i.toJson() + ")");
                 var nodeId = i.getId();
-                var nodeType = nodeMsg.type;
-                var nodeName = nodeMsg.text.text;
-                var props = eval(nodeMsg.props);
-
-                var nodeProperty = "";
-                $.each(props, function (index0, object0) {
-                    nodeProperty += '{' +
-                        '"propertyName":"' + index0 + '"'
-                        + ',"propertyValue":"' + object0.value + '"},';
-                });
-                if (nodeProperty != "") {
-                    nodeProperty = "[" + nodeProperty.trimEnd(",") + "]";
-                }
-                var nodeData = {
-                    "nodeId": nodeId.substring(4, nodeId.length),
-                    "nodeType": nodeType,
-                    "nodeName": nodeName,
-                    "nodeProperty": JSON.parse(nodeProperty)
-                }
-                a.config.tools.saveProperty.onclick(nodeId, nodeType, nodeData);
-                //详细解析属性信息，不过被上面的代码取代
-                /*var nodeProperty = "";
-                $("#myflow_props table div").each(function () {
-                    $(this).each(function (index, object) {
-                        var nodePropertyName = object.id.substring(1, object.id.length);
-                        var nodePropertyValue = "";
-                        $(object.children).each(function (index1, object1) {
-                            nodePropertyValue = object1.value;
-                        });
+                var nodeType = "";
+                var nodeData = "";
+                if(nodeId != "00000000"){ //不是流程主题修改
+                    var nodeMsg = eval("(" + i.toJson() + ")");
+                    nodeType = nodeMsg.type;
+                    var nodeName = nodeMsg.text.text;
+                    var props = eval(nodeMsg.props);
+                    var nodeProperty = "";
+                    $.each(props, function (index0, object0) {
                         nodeProperty += '{' +
-                            '"propertyName":"' + nodePropertyName + '"'
-                            + ',"propertyValue":"' + nodePropertyValue + '"},'
+                            '"propertyName":"' + index0 + '"'
+                            + ',"propertyValue":"' + object0.value + '"},';
                     });
-                });
-                if (nodeProperty != "") {
-                    nodeProperty = "[" + nodeProperty.trimEnd(",") + "]";
-                }*/
+                    if (nodeProperty != "") {
+                        nodeProperty = "[" + nodeProperty.trimEnd(",") + "]";
+                    }
+                    nodeData = {
+                        "nodeId": nodeId.substring(4, nodeId.length),
+                        "nodeType": nodeType,
+                        "nodeName": nodeName,
+                        "nodeProperty": JSON.parse(nodeProperty)
+                    }
+                    a.config.tools.saveProperty.onclick(nodeId, nodeType, nodeData);
+                }else{
+                    var property = eval(a.config.props);
+                    console.log("测试信息",property);
+                    var propsMsg = property.props;
+                    var props = eval(propsMsg);
+                    var nodeType = "root";
+                    var nodeProperty = "";
+                    var nodeName = "主流程";
+                    $.each(props, function (index0, object0) {
+                        nodeProperty += '{' +
+                            '"propertyName":"' + index0 + '"'
+                            + ',"propertyValue":"' + object0.value + '"},';
+                        if(index0 == "name"){
+                            nodeName = object0.value;
+                        }
+                    });
+                    if (nodeProperty != "") {
+                        nodeProperty = "[" + nodeProperty.trimEnd(",") + "]";
+                    }
+                    nodeData = {
+                        "nodeId": nodeId,
+                        "nodeType": "root",
+                        "nodeName": nodeName,
+                        "nodeProperty": JSON.parse(nodeProperty)
+                    }
+                   a.config.tools.saveProperty.onclick(nodeId, nodeType, nodeData);
+                }
             }).bind("click", function () {
                 return false
             }), e = c.find("table"), g = f;
@@ -897,7 +912,15 @@
             });
             e.empty();
             c.show();
-            a.config.activeRects.rects.push(i.getId().substring(4,i.getId().length));
+
+            /*var nodeId = i.getId();
+            if (i.hasOwnProperty("toJson")) {
+                var nodeMsg = eval("(" + i.toJson() + ")");
+                if (nodeMsg.type.indexOf(ignoreNode) > -1) {
+                    var node = eval(nodeMsg.props);
+                    nodeId = node.node.value;
+                }
+            }*/
             for (var l in m) {
                 e.append("<tr><th>" + m[l].label + '</th><td><div id="p' + l + '" class="editor"></div></td></tr>');
                 if (m[l].editor) {
@@ -917,7 +940,6 @@
                 g = l;
                 f = j;
                 b('<input  style="width:100%;"/>').val(g.text()).change(function () {
-                    //a.config.tools.updateNode.onclick(d.getId(), d.toJson());
                     i[e].value = b(this).val();
                     b(f).trigger("textchange", [b(this).val(), g])
                 }).appendTo("#" + c);
@@ -938,8 +960,9 @@
                 c = m;
                 g = l;
                 f = j;
-                b('<input  style="width:100%;" readonly/>').val(g.getId().substring(4, g.getId().length)).change(function () {
-                    //a.config.tools.updateNode.onclick(d.getId(), d.toJson());
+                var nodeId = a.config.activeRects.stateId[0];
+                a.config.activeRects.stateId = [];
+                b('<input  style="width:100%;" readonly/>').val(nodeId).change(function () {
                     i[e].value = b(this).val();
                     b(f).trigger("textchange", [b(this).val(), g])
                 }).appendTo("#" + c);
@@ -996,7 +1019,6 @@
                         data: JSON.stringify({"nodeId": arg}),
                         success: function (data) {
                             var opts = eval(data.data);
-                            console.log(opts);
                             if (opts && opts.length) {
                                 for (var idx = 0; idx < opts.length; idx++) {
                                     sle.append('<option value="' + opts[idx].userId + '">' + opts[idx].userName + '</option>');
@@ -1006,8 +1028,10 @@
                         }
                     });
                 } else {
-                    for (var idx = 0; idx < arg.length; idx++) {
-                        sle.append('<option value="' + arg[idx].value + '">' + arg[idx].name + '</option>');
+                    if (arg != null && arg != "") {
+                        for (var idx = 0; idx < arg.length; idx++) {
+                            sle.append('<option value="' + arg[idx].value + '">' + arg[idx].name + '</option>');
+                        }
                     }
                     sle.val(_props[_k].value);
                 }
@@ -1145,7 +1169,8 @@
             var z = {};
             if (B.states) {
                 for (var s in B.states) {
-                    var d = new a.rect(b.extend(true, {}, a.config.tools.states[B.states[s].type], B.states[s]), y);
+                    //console.log("rectId",s);
+                    var d = new a.rect(b.extend(true, {}, a.config.tools.states[B.states[s].type], B.states[s]), y, s);
                     d.restore(B.states[s]);
                     z[s] = d;
                     q[d.getId()] = d
