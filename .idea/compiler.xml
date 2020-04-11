@@ -8,7 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="bpm" />
-        <module name="julybpm" />
+        <module name="july-bpm" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
