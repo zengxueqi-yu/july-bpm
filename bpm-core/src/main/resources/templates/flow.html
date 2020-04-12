@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link rel="shortcut icon" href="../static/flow/img/favicon.ico" />
+    <link rel="shortcut icon" href="../static/flow/img/favicon.ico"/>
     <link type="text/css" href="../static/flow/lib/jquery-ui-1.8.4.custom/css/smoothness/jquery-ui-1.8.4.custom.css"
           rel="stylesheet"/>
 
@@ -70,11 +70,15 @@
                         onclick: function (id, data) {
                             //console.log("添加状态", id, eval("(" + data + ")"));
                             var node = eval("(" + data + ")");
+                            nodeData = {
+                                "nodeId": id.substring(4, id.length),
+                                "nodeType": node.type,
+                                "nodeName": node.text.text,
+                                "nodeProperty": null,
+                            }
                             var nodeMsg = {
                                 "flowId": "4ce08c32bcbab235fc6e6276e21b4f38",
-                                "nodeId": id.substring(4, id.length),
-                                "nodeName": node.text.text,
-                                "nodeType": node.type
+                                "nodeDto": nodeData
                             }
                             $.ajax({
                                 url: '/flowTaskNode/saveFlowTaskNode',
@@ -148,13 +152,13 @@
                         }
                     },
                     saveProperty: {
-                        onclick: function (nodeId,nodeType,nodeData) {
+                        onclick: function (nodeId, nodeType, nodeData) {
                             //console.log("节点id",nodeId);
                             //console.log("节点类型",nodeType);
                             //console.log("节点信息",nodeData);
                             var nodeMsg = {
-                                "flowId":"4ce08c32bcbab235fc6e6276e21b4f38",
-                                "nodeDto":nodeData
+                                "flowId": "4ce08c32bcbab235fc6e6276e21b4f38",
+                                "nodeDto": nodeData
                             }
                             $.ajax({
                                 url: '/flowTaskNode/saveFlowTaskNode',
@@ -177,7 +181,7 @@
             });
 
             function getFlowDesign() {
-                var flowJson = "{states:{rect1585875230378:{type:'start',ID:'',text:{text:'开始'}, attr:{ x:237, y:156, width:50, height:50}},rect1585875231944:{type:'state',ID:'',text:{text:'状态'}, attr:{ x:187, y:291, width:100, height:50}},rect1585875239753:{type:'state',ID:'',text:{text:'状态'}, attr:{ x:197, y:428, width:100, height:50}},rect1585875242464:{type:'end',ID:'',text:{text:'结束'}, attr:{ x:211, y:539, width:50, height:50}}},paths:{path1585875253537:{lineID:'',from:'rect1585875230378',to:'rect1585875231944', dots:[],text:{text:'',textPos:{x:0,y:-10}}, props:{text:{value:''}}},path1585875255768:{lineID:'',from:'rect1585875231944',to:'rect1585875239753', dots:[],text:{text:'',textPos:{x:0,y:-10}}, props:{text:{value:''}}},path1585875257505:{lineID:'',from:'rect1585875239753',to:'rect1585875242464', dots:[],text:{text:'',textPos:{x:0,y:-10}}, props:{text:{value:''}}}}}";
+                var flowJson = "{states:{rect062d22de4ef04b2f9f88dc2d8e4fe940:{type:'start',text:{text:'开始'},attr:{x:498,y:74,width:50,height:50},props:{node:{value:'062d22de4ef04b2f9f88dc2d8e4fe940'},text:{value:'开始'},temp1:{value:''},temp2:{value:''}}},rect14d471cd2fed4e24bac58cd5c646c864:{type:'state',text:{text:'状态'},attr:{x:473,y:192,width:100,height:50},props:{node:{value:'14d471cd2fed4e24bac58cd5c646c864'},text:{value:'状态'},temp1:{value:''},temp2:{value:''}}},rectcdb96f2c3185463287dfdebf42ac7ccd:{type:'task',text:{text:'任务'},attr:{x:473,y:321,width:100,height:50},props:{node:{value:'cdb96f2c3185463287dfdebf42ac7ccd'},text:{value:'任务'},assignee:{value:''},form:{value:''},desc:{value:''}}},rect5b37f27573d84d33ae34ede2eba2d676:{type:'end',text:{text:'结束'},attr:{x:499,y:445,width:50,height:50},props:{node:{value:'cdb96f2c3185463287dfdebf42ac7ccd'},text:{value:'结束'},temp1:{value:''},temp2:{value:''}}}},paths:{pathce3ee15bc1e241d287b25ac1b5e36e86:{from:'rect062d22de4ef04b2f9f88dc2d8e4fe940',to:'rect14d471cd2fed4e24bac58cd5c646c864',dots:[],text:{text:'TO 状态'},textPos:{x:0,y:-10},props:{text:{value:''}}},pathf23e84de0c1b48bb91b4b61d7f5f9f47:{from:'rect14d471cd2fed4e24bac58cd5c646c864',to:'rectcdb96f2c3185463287dfdebf42ac7ccd',dots:[],text:{text:'TO 任务'},textPos:{x:0,y:-10},props:{text:{value:''}}},pathed2078aef09548b38eed1f5960251df5:{from:'rectcdb96f2c3185463287dfdebf42ac7ccd',to:'rect5b37f27573d84d33ae34ede2eba2d676',dots:[],text:{text:'TO 结束'},textPos:{x:0,y:-10},props:{text:{value:''}}}},props:{props:{name:{value:'新建流程1'},key:{value:'1'},desc:{value:'1'}}}}";
                 var flowDesign = {
                     "flowId": "4ce08c32bcbab235fc6e6276e21b4f38"
                 }
@@ -190,7 +194,9 @@
                     data: JSON.stringify(flowDesign),
                     cache: false,
                     success: function (res) {
-                        flowJson = res.data.flowJson;
+                        if (res.data.flowJson != null && res.data.flowJson != '') {
+                            flowJson = res.data.flowJson;
+                        }
                     }
                 });
                 return flowJson;

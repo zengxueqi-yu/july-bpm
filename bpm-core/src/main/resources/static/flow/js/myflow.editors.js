@@ -10,11 +10,29 @@
                 _div = div;
                 _src = src;
                 _r = r;
-                $('<input style="width:100%;"/>').val(props[_k].value).change(function () {
-                    props[_k].value = $(this).val();
-                }).appendTo('#' + _div);
-
-                $('#' + _div).data('editor', this);
+                if(myflow.config.isRoot) {
+                    var flow = myflow.config.root[0];
+                    if(_k == "name"){
+                        console.log("这是啥？",flow);
+                        $('<input style="width:100%;"/>').val(flow.name.value).change(function () {
+                            props[_k].value = $(this).val();
+                        }).appendTo('#' + _div);
+                    }else if(_k == "key"){
+                        $('<input style="width:100%;"/>').val(flow.key.value).change(function () {
+                            props[_k].value = $(this).val();
+                        }).appendTo('#' + _div);
+                    }else if(_k == "desc"){
+                        $('<input style="width:100%;"/>').val(flow.desc.value).change(function () {
+                            props[_k].value = $(this).val();
+                        }).appendTo('#' + _div);
+                    }
+                    $('#' + _div).data('editor', this);
+                }else{
+                    $('<input style="width:100%;"/>').val(props[_k].value).change(function () {
+                        props[_k].value = $(this).val();
+                    }).appendTo('#' + _div);
+                    $('#' + _div).data('editor', this);
+                }
             }
             this.destroy = function () {
                 $('#' + _div + ' input').each(function () {

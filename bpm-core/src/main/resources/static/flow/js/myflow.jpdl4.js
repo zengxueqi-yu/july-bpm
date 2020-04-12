@@ -13,6 +13,7 @@
     $.extend(true, myflow.config.props.props, {
         name: {
             name: 'name', label: '名称', value: '新建流程', editor: function () {
+                //console.log("有数据吗？",myflow.config.root);
                 return new myflow.editors.inputEditor();
             }
         },

@@ -1,5 +1,6 @@
 (function (b) {
     var ignoreNode = "start,fork,path,end";
+    var flowNodeId = "start,task,fork,join,end";
 
     function generateUUID() {
         var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('')
@@ -71,7 +72,9 @@
                 }
             }
         },
-        props: {attr: {top: 10, right: 30}, props: {}},
+        root: [],
+        isRoot: true,
+        props: {attr: {top: 10, right: 30}, props: []},
         restore: "",
         activeRects: {rects: [], stateId: [], rectAttr: {stroke: "#ff0000", "stroke-width": 2}},
         historyRects: {rects: [], pathAttr: {path: {stroke: "#00ff00"}, arrow: {stroke: "#00ff00", fill: "#00ff00"}}}
@@ -137,7 +140,11 @@
     a.rect = function (p, m, s) {
         var UUID = generateUUID(); //a.util.nextId()
         var stateId = s;
-        var u = this, g = "rect" + UUID, E = b.extend(true, {}, a.config.rect, p), C = m, t, e, n, f, x, v;
+        var g = "rect" + UUID;
+        if (s != null && s != '') {
+            g = s;
+        }
+        var u = this, E = b.extend(true, {}, a.config.rect, p), C = m, t, e, n, f, x, v;
         t = C.rect(E.attr.x, E.attr.y, E.attr.width, E.attr.height, E.attr.r).hide().attr(E.attr);
         e = C.image(a.config.basePath + E.img.src, E.attr.x + E.img.width / 2, E.attr.y + (E.attr.height - E.img.height) / 2, E.img.width, E.img.height).hide();
         n = C.text(E.attr.x + E.img.width + (E.attr.width - E.img.width) / 2, E.attr.y + a.config.lineHeight / 2, E.name.text).hide().attr(E.name);
@@ -315,6 +322,7 @@
                 return
             }
             w();
+            a.config.isRoot = false;
             var nodeId = stateId.substring(4, stateId.length);
             a.config.activeRects.stateId.push(nodeId);
             a.config.tools.clickRect.onclick(nodeId, u.toJson());
@@ -407,7 +415,11 @@
         this.toJson = function () {
             var r = "{type:'" + E.type + "',text:{text:'" + f.attr("text") + "'}, attr:{ x:" + Math.round(t.attr("x")) + ", y:" + Math.round(t.attr("y")) + ", width:" + Math.round(t.attr("width")) + ", height:" + Math.round(t.attr("height")) + "}, props:{";
             for (var o in E.props) {
-                r += o + ":{value:'" + E.props[o].value + "'},"
+                var value = E.props[o].value;
+                if (o.indexOf(flowNodeId) > -1) {
+                    value = stateId;
+                }
+                r += o + ":{value:'" + value + "'},"
             }
             if (r.substring(r.length - 1, r.length) == ",") {
                 r = r.substring(0, r.length - 1)
@@ -711,6 +723,7 @@
             b(z).trigger("click", v);
             b(z).data("currNode", v);
             a.config.tools.clickPath.onclick(g);
+            a.config.isRoot = false;
             return false
         });
         var l = function (r, C) {
@@ -848,7 +861,7 @@
                 var nodeId = i.getId();
                 var nodeType = "";
                 var nodeData = "";
-                if(nodeId != "00000000"){ //不是流程主题修改
+                if (nodeId != "00000000") { //不是流程主题修改
                     var nodeMsg = eval("(" + i.toJson() + ")");
                     nodeType = nodeMsg.type;
                     var nodeName = nodeMsg.text.text;
@@ -869,32 +882,59 @@
                         "nodeProperty": JSON.parse(nodeProperty)
                     }
                     a.config.tools.saveProperty.onclick(nodeId, nodeType, nodeData);
-                }else{
-                    var property = eval(a.config.props);
-                    console.log("测试信息",property);
+                } else {
+                    var property = eval(a.config.props.props);
                     var propsMsg = property.props;
                     var props = eval(propsMsg);
                     var nodeType = "root";
                     var nodeProperty = "";
                     var nodeName = "主流程";
-                    $.each(props, function (index0, object0) {
+
+                    nodeProperty += '[{' +
+                        '"propertyName":"' + property.name.name + '"'
+                        + ',"propertyValue":"' + property.name.value + '"},'
+                        +
+                        '{' +
+                        '"propertyName":"' + property.key.name + '"'
+                        + ',"propertyValue":"' + property.key.value + '"},'
+                        +
+                        '{' +
+                        '"propertyName":"' + property.desc.name + '"'
+                        + ',"propertyValue":"' + property.desc.value + '"}]';
+
+                    /*$.each(props, function (index0, object0) {
                         nodeProperty += '{' +
                             '"propertyName":"' + index0 + '"'
                             + ',"propertyValue":"' + object0.value + '"},';
-                        if(index0 == "name"){
+                        if (index0 == "name") {
                             nodeName = object0.value;
                         }
                     });
                     if (nodeProperty != "") {
                         nodeProperty = "[" + nodeProperty.trimEnd(",") + "]";
-                    }
+                    }*/
                     nodeData = {
                         "nodeId": nodeId,
                         "nodeType": "root",
                         "nodeName": nodeName,
                         "nodeProperty": JSON.parse(nodeProperty)
                     }
-                   a.config.tools.saveProperty.onclick(nodeId, nodeType, nodeData);
+
+                    a.config.root = new Array();
+                    a.config.root.push(
+                        {
+                            name: {
+                                value: property.name.value
+                            },
+                            key: {
+                                value: property.key.value
+                            },
+                            desc: {
+                                value: property.desc.value
+                            }
+                        }
+                    );
+                    a.config.tools.saveProperty.onclick(nodeId, nodeType, nodeData);
                 }
             }).bind("click", function () {
                 return false
@@ -912,15 +952,6 @@
             });
             e.empty();
             c.show();
-
-            /*var nodeId = i.getId();
-            if (i.hasOwnProperty("toJson")) {
-                var nodeMsg = eval("(" + i.toJson() + ")");
-                if (nodeMsg.type.indexOf(ignoreNode) > -1) {
-                    var node = eval(nodeMsg.props);
-                    nodeId = node.node.value;
-                }
-            }*/
             for (var l in m) {
                 e.append("<tr><th>" + m[l].label + '</th><td><div id="p' + l + '" class="editor"></div></td></tr>');
                 if (m[l].editor) {
@@ -984,7 +1015,6 @@
                 g = l;
                 f = j;
                 b('<input  style="width:100%;" readonly/>').val(g.getId().substring(4, g.getId().length)).change(function () {
-                    //a.config.tools.updateNode.onclick(d.getId(), d.toJson());
                     i[e].value = b(this).val();
                     b(f).trigger("textchange", [b(this).val(), g])
                 }).appendTo("#" + c);
@@ -1074,12 +1104,27 @@
                     return "00000000"
                 }
             });
+            a.config.isRoot = true;
             b(y).trigger("showprops", [a.config.props.props, {
                 getId: function () {
                     return "00000000"
                 }
             }])
         });
+        var defaultDocument = function () {
+            b(y).data("currNode", null);
+            b(y).trigger("click", {
+                getId: function () {
+                    return "00000000"
+                }
+            });
+            a.config.isRoot = true;
+            b(y).trigger("showprops", [a.config.props.props, {
+                getId: function () {
+                    return "00000000"
+                }
+            }]);
+        }
         var w = function (c, i) {
             if (!a.config.editable) {
                 return
@@ -1153,13 +1198,20 @@
                     i = i.substring(0, i.length - 1)
                 }
                 i += "},props:{props:{";
-                for (var c in a.config.props.props) {
+
+                i += "name:{value:'" + a.config.root[0].name.value + "'},";
+                i += "key:{value:'" + a.config.root[0].key.value + "'},";
+                i += "desc:{value:'" + a.config.root[0].desc.value + "'}";
+
+                /*for (var c in a.config.props.props) {
                     i += c + ":{value:'" + a.config.props.props[c].value + "'},"
-                }
+                }*/
+
                 if (i.substring(i.length - 1, i.length) == ",") {
                     i = i.substring(0, i.length - 1)
                 }
                 i += "}}}";
+                console.log("flowJson", i);
                 a.config.tools.save.onclick(i)
             });
             new a.props({}, y)
@@ -1167,9 +1219,11 @@
         if (r.restore) {
             var B = r.restore;
             var z = {};
+            a.config.root = B.props.props;
+            //a.config.props.props = B.props.props;
             if (B.states) {
                 for (var s in B.states) {
-                    //console.log("rectId",s);
+                    //从数据库查询数据画图
                     var d = new a.rect(b.extend(true, {}, a.config.tools.states[B.states[s].type], B.states[s]), y, s);
                     d.restore(B.states[s]);
                     z[s] = d;
@@ -1183,6 +1237,21 @@
                     g[n.getId()] = n
                 }
             }
+            var flowDocu = B.props.props;
+            a.config.root = new Array();
+            a.config.root.push(
+                {
+                    name: {
+                        value: flowDocu.name.value
+                    },
+                    key: {
+                        value: flowDocu.key.value
+                    },
+                    desc: {
+                        value: flowDocu.desc.value
+                    }
+                }
+            );
         }
         var A = a.config.historyRects, l = a.config.activeRects;
         if (A.rects.length || l.rects.length) {
