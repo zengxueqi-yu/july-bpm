@@ -1,0 +1,333 @@
+.pop {
+    display: none;
+    position: fixed;
+    z-index: 998;
+    top: 50%;
+    left: 50%;
+    width: 700px;
+    /* height: 450px; */
+    /* max-height: 450px; */
+    margin-top: -250px;
+    margin-left: -350px;
+    background-color: #fff;
+    /* box-shadow: 0 0 4px 4px #e8e8e8; */
+}
+
+.pop .pop_h {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 30px;
+    background-color: #20A0FF;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.pop .pop_h .pop_h_title {
+    margin-left: 15px;
+    color: #333;
+    font-size: 14px;
+    line-height: 30px;
+}
+
+.pop .pop_h .close {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    right: 13px;
+    width: 30px;
+    height: 40px;
+    background: url(img/pop_btn_close.png) center center no-repeat;
+    background-size: 30px;
+}
+
+.pop .pop_h .close:hover {
+    cursor: pointer;
+}
+
+.pop .pop_cont {
+    position: relative;
+    display: block;
+    max-height: 400px;
+    color: #333;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: #fff;
+    padding: 20px;
+    padding-bottom: 0;
+    font-size: 14px;
+}
+
+/* 滚轮样式 */
+.pop .pop_cont::-webkit-scrollbar {
+    width: 10px;
+}
+
+.pop .pop_cont::-webkit-scrollbar-track {
+    background-color: #fff;
+}
+
+.pop .pop_cont::-webkit-scrollbar-thumb {
+    background-color: #c1c1c1;
+}
+
+.pop .pop_cont::-webkit-scrollbar-button {
+    background-color: #fff;
+}
+
+.pop .pop_cont::-webkit-scrollbar-corner {
+    background-color: #fff;
+}
+
+.pop .pop_cont {
+    scrollbar-face-color: #c1c1c1;
+    scrollbar-arrow-color: #c1c1c1;
+    scrollbar-3dlight-color: #c1c1c1;
+    scrollbar-highlight-color: #c1c1c1;
+    scrollbar-shadow-color: #c1c1c1;
+    scrollbar-darkshadow-color: #c1c1c1;
+    scrollbar-track-color: #fff;
+    scrollbar-base-color: #fc5e3d;
+}
+
+.pop .pop_one {
+    display: table;
+    height: 40px;
+    line-height: 40px;
+    margin: 0 auto 10px;
+    color: #333;
+}
+
+.pop .pop_one.pop_one_photo {
+    float: right;
+    width: 120px;
+    height: 120px;
+    margin-bottom: 0;
+    margin-right: 10px;
+}
+
+.pop .pop_one.pop_one_short {
+    width: 250px;
+    float: left;
+    margin-left: 5px;
+}
+
+.pop .pop_one.pop_one_short .ipt_box {
+    width: 240px;
+}
+
+.pop .pop_one span {
+    float: left;
+    display: block;
+    min-width: 10px;
+    resize: none;
+    font-size: 14px;
+}
+
+.pop .pop_one input, .pop .pop_one select, .pop .pop_one textarea {
+    float: left;
+    display: block;
+    min-width: 10px;
+    height: 36px;
+    line-height: 38px;
+    resize: none;
+    color: #333;
+    outline: none;
+    border: 0;
+    margin-top: 1px;
+    font-size: 14px;
+}
+
+.pop .pop_one input {
+    text-indent: 8px;
+}
+
+.pop .pop_one select option {
+    height: 30px;
+    line-height: 30px;
+}
+
+.pop .pop_one .xing {
+    color: #f14848;
+}
+
+.pop .pop_one .ipt_box {
+    position: relative;
+    float: left;
+    width: 630px;
+    height: 40px;
+    border: 1px solid #c9c9c9;
+    line-height: 38px;
+    text-indent: 10px;
+}
+
+.pop .pop_one .ipt_box i {
+    display: inline-block;
+    float: left;
+    color: #999;
+    font-style: normal;
+    font-size: 14px;
+}
+
+.pop .pop_one .photo_box p {
+    line-height: 20px;
+    text-align: center;
+    margin-top: -12px;
+    font-size: 12px;
+}
+
+.pop .pop_one input, .pop .pop_one select {
+    width: 545px;
+}
+
+.pop .btn_box {
+    z-index: 50;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 62px;
+    background-color: #fff;
+}
+
+.pop .btn_box .btn {
+    min-width: 90px;
+    height: 30px;
+    line-height: 28px;
+    background: #fff;
+    border: 1px solid #bbb;
+    text-align: center;
+    color: #333;
+    font-size: 12px;
+    margin: 20px 0 10px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.pop .btn_box .btn_cancle {
+    margin-left: 255px;
+}
+
+.pop_big .btn_box .btn_cancle, .pop_big .btn_box .btn_sure.btn_gray {
+    margin-left: 295px;
+    background: #fff;
+    border: 1px solid #bbb;
+    color: #333;
+}
+
+.pop .btn_box .btn_sure, .pop .btn_box .btn_submit {
+    background: #d33d3d;
+    border: 1px solid #d33d3d;
+    color: #fff;
+    margin-left: 10px;
+}
+
+.pop .cont {
+    text-align: center;
+    font-size: 16px;
+    line-height: 30px;
+}
+
+.pop .pop_cont .title {
+    position: relative;
+    line-height: 14px;
+    margin-bottom: 10px;
+    display: table;
+    width: 100%;
+}
+
+.pop .pop_cont .title .line {
+    display: inline-block;
+    width: 2px;
+    height: 14px;
+    vertical-align: top;
+    background-color: #D63F3B;
+    margin: 0 10px 0 0;
+    border: 0;
+}
+
+.pop .pop_cont .title.mar_top20 {
+    margin-top: 20px;
+}
+
+.pop .pop_cont .title .btn {
+    position: relative;
+    float: right;
+    margin-left: 10px;
+    margin-bottom: -9px;
+}
+
+.pop .select_mb .ipt_box {
+    width: 630px;
+    height: 200px;
+    border: 1px solid #c9c9c9;
+    line-height: 38px;
+    text-indent: 10px;
+    overflow: auto;
+}
+
+.pop .select_mb .ipt_box li {
+    display: table;
+    height: 20px;
+    background-image: none;
+    line-height: 20px;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-indent: 2px;
+    margin: 5px 0;
+}
+
+.pop .select_mb .ipt_box ul li input {
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 3px 5px 0 10px;
+}
+
+.pop .pop_cont .btn_r {
+    float: right;
+    margin-top: -7px;
+}
+
+.pop .pop_cont table {
+    width: 100%;
+    border-top: 1px solid #c9c9c9;
+    border-left: 1px solid #c9c9c9;
+}
+
+.pop .pop_cont th, .pop .pop_cont td {
+    height: 36px;
+    line-height: 36px;
+    white-space: nowrap;
+    border-right: 1px solid #c9c9c9;
+    border-bottom: 1px solid #c9c9c9;
+}
+
+.pop .pop_cont th {
+    text-align: left;
+    padding: 0 10px;
+}
+
+.pop .pop_cont td input, .pop .pop_cont td select {
+    width: 100%;
+    height: 36px;
+    line-height: 36px;
+    border: none;
+    text-indent: 10px;
+}
+
+.pop .pop_cont td input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    margin: 7px auto;
+    border: 1px solid #ddd;
+    margin-left: 10px;
+}
+
+.pop .pop_cont td .btn {
+    margin: 3px 10px;
+}
+
+/*.GooFlow .item_round .span p, .GooFlow td p {*/
+/*line-height: 20px;*/
+/*}*/

@@ -322,8 +322,15 @@
                 return
             }
             w();
+
+            var nodeId = "";
+            if(stateId == null || stateId == ""){
+                nodeId = u.getId().substring(4, u.getId().length);
+            }else{
+                nodeId = stateId.substring(4, stateId.length);
+            }
+
             a.config.isRoot = false;
-            var nodeId = stateId.substring(4, stateId.length);
             a.config.activeRects.stateId.push(nodeId);
             a.config.tools.clickRect.onclick(nodeId, u.toJson());
             var o = b(C).data("mod");

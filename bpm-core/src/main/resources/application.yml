@@ -7,9 +7,9 @@ spring:
     name: ownDataSource
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://127.0.0.1/bpm_flow?useSSL=false&useUnicode=true&serverTimezone=Asia/Shanghai
+      url: jdbc:mysql://192.168.3.99/bpm_flow?useSSL=false&useUnicode=true&serverTimezone=Asia/Shanghai
       username: root
-      password: 123456
+      password: root
       initial-size: 1
       max-active: 20
   tomcat:

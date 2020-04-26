@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="bpm" />
         <module name="july-bpm" />
+        <module name="julybpm" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

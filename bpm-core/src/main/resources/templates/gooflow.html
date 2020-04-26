@@ -6,7 +6,7 @@
     <!--[if lt IE 9]>
     <?import namespace="v" implementation="#default#VML" ?>
     <![endif]-->
-    <link rel="stylesheet" type="text/css" href="../static/gooflow/codebase/GooFlow.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/gooflow/GooFlow.css"/>
     <style>
         .myForm {
             display: block;
@@ -57,20 +57,23 @@
             width: 260px
         }
     </style>
-    <script type="text/javascript" src="../static/gooflow/js/child.js"></script>
+    <script type="text/javascript" src="../static/gooflow/child.js"></script>
     <script type="text/javascript" src="../static/gooflow/plugin/jquery.min.js"></script>
-    <script type="text/javascript" src="../static/gooflow/codebase/GooFunc.js"></script>
+    <script type="text/javascript" src="../static/gooflow/GooFunc.js"></script>
     <script type="text/javascript" src="../static/gooflow/plugin/json2.js"></script>
-    <link rel="stylesheet" type="text/css" href="../static/gooflow/css/default.css"/>
-    <script type="text/javascript" src="../static/gooflow/codebase/GooFlow.js"></script>
-    <script type="text/javascript" src="../static/gooflow/codebase/GooFlow.color.js"></script>
+    <link rel="stylesheet" type="text/css" href="../static/gooflow/default.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/gooflow/GooFlow2.css">
+    <link rel="stylesheet" type="text/css" href="../static/gooflow/common.css">
+    <script type="text/javascript" src="../static/gooflow/GooFlow.js"></script>
+    <script type="text/javascript" src="../static/gooflow/GooFlow.color.js"></script>
     <script type="text/javascript">
+        var flowId = "cfe08c32bcbab235fc6e6276e21b4f83";
         var property = {
             width: 1072,
             height: 600,
             toolBtns: ["start round", "end round", "task round", "node", "chat", "state", "plug", "join", "fork", "complex mix"],
             haveHead: true,
-            headBtns: ["new", "open", "save", "undo", "redo", "reload"],//如果haveHead=true，则定义HEAD区的按钮
+            headBtns: ["new", "open", "save", "undo", "redo", "reload", "print"],//如果haveHead=true，则定义HEAD区的按钮
             haveTool: true,
             haveGroup: true,
             useOperStack: true
@@ -90,11 +93,12 @@
             "complex mix": "复合结点",
             group: "组织划分框编辑开关"
         };
-        var gooFlow;
+        var demo;
+        var executor_user_scope = 1;
         $(document).ready(function () {
-            gooFlow = $.createGooFlow($("#gooFlow"), property);
-            gooFlow.setNodeRemarks(remark);
-            gooFlow.onItemDel = function (id, type) {
+            demo = $.createGooFlow($("#demo"), property);
+            demo.setNodeRemarks(remark);
+            demo.onItemDel = function (id, type) {
                 if (confirm("确定要删除该单元吗?")) {
                     this.blurItem();
                     return true;
@@ -102,8 +106,8 @@
                     return false;
                 }
             }
-            gooFlow.loadData(jsondata);
-            gooFlow.onItemFocus = function (id, model) {
+            demo.loadData(JSON.parse(getFlowDesign()));
+            demo.onItemFocus = function (id, model) {
                 var obj;
                 $("#ele_model").val(model);
                 $("#ele_id").val(id);
@@ -129,174 +133,182 @@
                 $("#ele_name").val(obj.name);
                 return true;
             };
-            gooFlow.onItemBlur = function (id, model) {
-                document.getElementById("propertyForm").reset();
-                return true;
-            };
-
-            gooFlow.onBtnSaveClick = function () {
-                var obj = gooFlow.$nodeData;
-
-                var nodeData = "";
-                $.each(obj, function (i, v) {
-                    nodeData += '{' +
-                        '"nodeID": "' + i + '"'
-                        + ',"nodeType":  "' + obj[i].type + '"'
-                        + ',"nodeName":  "' + obj[i].name + '"'
-                        + ',"nodeLeft":  ' + obj[i].left + ''
-                        + ',"nodeTop":  ' + obj[i].top + ''
-                        + ',"nodeWidth":  ' + obj[i].width + ''
-                        + ',"nodeHeight":  ' + obj[i].height + ''
-                        + ',"Marked": false},';
+            demo.onBtnSaveClick = function () {
+                var flowJson = demo.exportData();
+                var flowDesignMsg = {
+                    "flowId": flowId,
+                    "flowJson": flowJson
+                }
+                $.ajax({
+                    url: '/flowDesign/saveFlowDesign',
+                    type: 'post',
+                    dataType: 'json',
+                    contentType: "application/json;charset=utf-8",//这个参数也是header参数
+                    data: JSON.stringify(flowDesignMsg),
+                    cache: false,
+                    success: function (res) {
+                        demo.loadData(getFlowDesign());
+                    }
                 });
-                if (nodeData != "") {
-                    nodeData = "[" + nodeData.trimEnd(",") + "]";
-                }
-                alert(nodeData);
-            }
-            gooFlow.setItemExtra = function (e, t, i) {
-                if (null != e && "" !== e && null != t && "" !== t) {
-                    var n = "node" === t ? this.$nodeData[e] : "line" === t ? this.$lineData[e] : "area" === t ? this.$areaData[e] : this.$memoData[e];
-                    for (var o in i) n[o] =
-                        i[o]
-                }
-            }
-            gooFlow.clearData = function () {
-                for (var e in this.$nodeData) this.delNode(e, !1, !1, !0);
-                for (var t in this.$lineData) this.delLine(t, !1, !1, !0);
-                for (var i in this.$areaData) this.delArea(i, !1, !1, !0);
-                for (var n in this.$memoData) this.delMemo(n, !1, !1, !0);
-                for (var o in this.$extra) delete this.$extra[o];
-                this.$max = 1, this.$deletedItem = {}, this.$navMap && this.refreshMap()
-            }
+            };
+            demo.onPrintClick = function () {
+                demo.print();
+            };
         });
         var out;
 
-        function editflowsuperviseItem() {
-            var $form = $("#propertyForm");
-            //获取节点ID 和 属性（node/line）
-            var comp_id = $form.find("input[name='compid']").val();
-            var comp_model = $form.find("input[name='model']").val();
+        function Export() {
+            document.getElementById("result").value = JSON.stringify(demo.exportData());
+        }
 
-            if (comp_id) {
-                var flowchartdata = gooFlow.exportData();
-                if (comp_model && comp_model == "node") {
-                    $.each(flowchartdata.nodes, function (i, n) {
-                        if (i == comp_id) {
-                            //将form表单信息更新到node节点事项各个属性中
-                            $form.find("input").each(function () {
-                                if ($(this).prop('name') && $(this).prop('name') != 'compid') {//组件ID 不相等就不修改了
-                                    if (!($(this).attr('comptype')) || $(this).attr('comptype') == 'node') {
-                                        n[$(this).prop('name')] = $(this).val();
-                                        // name 名 和 节点属性对应，把值放进去，跟回显信息相反
-                                        // alert($(this).prop('name') + ":" + $(this).val());
-                                    }
-                                }
-                            });
-                            //n['name'] = $form.find("input[name='name']").val();
-                            flowchartdata.nodes[i] = n;
-                        }
-                    });
-                }
-                if (comp_model && comp_model == 'line') {
-                    $.each(flowchartdata.lines, function (i, n) {
-                        if (i == comp_id) {
-                            //将form表单信息更新到line节点事项各个属性中
-                            $form.find("input").each(function () {
-                                if ($(this).prop('name') && $(this).prop('name') != 'compid') {//组件ID就不修改了
-                                    if (!($(this).attr('comptype')) || $(this).attr('comptype') == 'line') {
-                                        console.log(i + "?");
-                                        if ($(this).prop('name') == "dash") {
-                                            if ($(this).val() == "false") {
-                                                n[$(this).prop('name')] = false;
-                                            }
-                                            if ($(this).val() == "true") {
-                                                console.log("1" + $(this).prop('name'));
-                                                n[$(this).prop('name')] = true;
-                                            }
-                                        } else {
-                                            n[$(this).prop('name')] = $(this).val();
-                                        }
-                                    }
-                                }
-                            });
-                            n['name'] = $form.find("input[name='name']").val();
-                            //flowchartdata.lines[i] = n;
-                        }
-                    });
-                }
-                gooFlow.clearData();
-                gooFlow.loadData(flowchartdata);
-            } else {
-                alert('请先选择节点！');
+        // 当双击时，初始化节点编辑窗口信息
+        function init_node_info(id) {
+            var jsonDate = JSON.parse(JSON.stringify(demo.exportData()));
+            var nodeInfo = jsonDate.nodes[id];
+            $("#node_name").val(nodeInfo.name);
+            $("#node_id").val(id);
+            init_node_role($("#node_role"), jsonDate.nodes[id].executor_role_scope);
+            init_node_role($("#node_notify_role"), jsonDate.nodes[id].notify_role_scope);
+        }
+
+        function init_node_role($role_container, roles) {
+            $role_container.find('input').each(function (index, item) {
+                $(item).attr('checked', false);
+            });
+            if (roles) {
+                var role_array = roles.split(",");
+                $.each(role_array, function (index, item) {
+                    if (item) {
+                        $role_container.find('input[role_id=' + item + ']').attr('checked', true);
+                    }
+                });
             }
         }
 
-        function Export() {
-            document.getElementById("result").value = JSON.stringify(gooFlow.exportData());
+        function get_node_role($role_container) {
+            var roles = {
+                scope: "",
+                text: ""
+            };
+
+            $role_container.find('input').each(function (index, item) {
+                if ($(item).attr('checked')) {
+                    roles.scope += $(item).attr('role_id') + ',';
+                    roles.text += $(item).attr('role_name') + ','
+                }
+            });
+            if (roles.scope.length > 0) {
+                roles.scope = roles.scope.substr(0, roles.scope.length - 1);
+            }
+            if (roles.text.length > 0) {
+                roles.text = roles.text.substr(0, roles.text.length - 1);
+            }
+            return roles;
+        }
+
+        //节点窗口按钮操作
+        function nodeClose() {
+            $(".shade,.pop_node").hide();
+        }
+
+        function getFlowDesign() {
+            var flowJson = jsondata;
+            var flowDesign = {
+                "flowId": flowId
+            }
+            $.ajax({
+                url: '/flowDesign/getFlowDesign',
+                type: 'post',
+                dataType: 'json',
+                async: false, // 同步
+                contentType: "application/json;charset=utf-8",//这个参数也是header参数
+                data: JSON.stringify(flowDesign),
+                cache: false,
+                success: function (res) {
+                    if (res.data.flowJson != null && res.data.flowJson != '') {
+                        flowJson = res.data.flowJson;
+                    }
+                }
+            });
+            return flowJson;
         }
     </script>
 </head>
 <body style="background:#EEEEEE">
-<div id="gooFlow" style="margin:5px;float:left"></div>
-<form class="myForm" id="propertyForm">
-    <div class="form_title">属性设置</div>
-    <div class="form_content">
-        <table>
-            <tr>
-                <td class="th">Id：</td>
-                <td><input type="text" style="width:120px" id="ele_id" name="compid" readonly="readonly"/></td>
-            </tr>
-            <tr>
-                <td class="th">Name：</td>
-                <td><input type="text" style="width:120px" id="ele_name" name="name"/></td>
-            </tr>
-            <tr>
-                <td class="th">Type：</td>
-                <td><input type="text" style="width:120px" id="ele_type" name="type"/></td>
-            </tr>
-            <tr>
-                <td class="th">Model：</td>
-                <td><input type="text" style="width:120px" id="ele_model" name="model"/></td>
-            </tr>
-            <tr>
-                <td class="th">Left-r：</td>
-                <td><input type="text" style="width:120px" id="ele_left" name="left" comptype="node"/></td>
-            </tr>
-            <tr>
-                <td class="th">Top-r：</td>
-                <td><input type="text" style="width:120px" id="ele_top" name="top" comptype="node"/></td>
-            </tr>
-            <tr>
-                <td class="th">Width：</td>
-                <td><input type="text" style="width:120px" id="ele_width" name="width" comptype="node"/></td>
-            </tr>
-            <tr>
-                <td class="th">Height：</td>
-                <td><input type="text" style="width:120px" id="ele_height" name="height" comptype="node"/></td>
-            </tr>
-            <tr>
-                <td class="th">From：</td>
-                <td><input type="text" style="width:120px" id="ele_from" name="from" comptype="line"/></td>
-            </tr>
-            <tr>
-                <td class="th">To：</td>
-                <td><input type="text" style="width:120px" id="ele_to" name="to" comptype="line"/></td>
-            </tr>
-            <tr>
-                <th class="th">是否虚线：</th>
-                <td><input type="text" style="width:120px" id="ele_dash" name="dash" comptype="line"/></td>
-            </tr>
-        </table>
-    </div>
-    <div class="form_btn_div">
-        <input type="reset" value="重置"/>
-        <input type="button" value="确定" onclick="editflowsuperviseItem()"/>
-    </div>
-</form>
+<div id="demo" style="margin:5px;float:left"></div>
 <div style="clear:both">
     <input id="submit" type="button" value='导出结果' onclick="Export()"/>
     <textarea id="result" row="6"></textarea>
+</div>
+
+<!-- 节点编辑 -->
+<div class="shade_edit_disabled"></div>
+<div class="shade"></div>
+<div class="pop pop_node">
+    <div class="pop_h">
+        <span class="pop_h_title"><span class="line"></span>节点编辑</span>
+        <span class="close" onclick="nodeClose()"></span>
+    </div>
+    <div class="pop_cont">
+        <div class="pop_cont_box">
+            <p class="title"><span class="line"></span>基本信息</p>
+            <div class="pop_one pop450_span4"><span class="xing">*</span>
+                <div class="ipt_box"><i>节点ID：</i><input type="text" id="node_id"></div>
+            </div>
+            <div class="pop_one pop450_span4"><span class="xing">*</span>
+                <div class="ipt_box"><i>节点名称：</i><input type="text" id="node_name"></div>
+            </div>
+            <div class="pop_one pop450_span4"><span class="xing">*</span>
+                <div class="ipt_box"><i>审核类型：</i>
+                    <select id="node_review_type" class="poprole">
+                        <option value="31">多人单审</option>
+                        <option value="32">多人并审</option>
+                        <option value="33">由上一节点指定</option>
+                    </select>
+                </div>
+            </div>
+            <p class="title mar_top20"><span class="line"></span>选择节点角色</p>
+            <div class="pop_one  select_mb">
+                <div class="ipt_box">
+                    <ul class="select_com_ul" id="node_role">
+                    </ul>
+                </div>
+            </div>
+            <p class="title mar_top20"><span class="line"></span>选择知会角色</p>
+            <div class="pop_one  select_mb">
+                <div class="ipt_box">
+                    <ul class="select_com_ul" id="node_notify_role">
+                    </ul>
+                </div>
+            </div>
+            <p class="title mar_top20"><span class="line"></span>附加流程表单<span class="btn btn_r"
+                                                                             onclick="addTr()">增加</span></p>
+            <table>
+                <thead>
+                <th>字段名称</th>
+                <th>字段编码</th>
+                <th>字段类型</th>
+                <th>字段值</th>
+                <th>是否必填</th>
+                <th>操作</th>
+                </thead>
+                <tbody id="tbody">
+                <tr>
+                    <td><input type="text"/></td>
+                    <td><input type="text"/></td>
+                    <td><select></select></td>
+                    <td><input type="text"/></td>
+                    <td><input type="checkbox"/></td>
+                    <td><span class="btn">删除</span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="btn_box">
+        <span class="btn btn_cancle" onclick="nodeClose()">取消</span>
+        <span class="btn btn_sure" id="node_save">确定</span>
+    </div>
 </div>
 </body>
 </html>

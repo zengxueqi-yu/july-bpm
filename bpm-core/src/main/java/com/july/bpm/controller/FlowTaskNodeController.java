@@ -32,7 +32,8 @@ public class FlowTaskNodeController {
      */
     @PostMapping("/saveFlowTaskNode")
     public ApiResult<Long> saveFlowTaskNode(@RequestBody SaveFlowTaskNodeDto saveFlowTaskNodeDto){
-        flowTaskNodeService.saveFlowTaskNode(saveFlowTaskNodeDto);
+        System.out.println("节点信息===>" + saveFlowTaskNodeDto);
+        //flowTaskNodeService.saveFlowTaskNode(saveFlowTaskNodeDto);
         return ApiResult.ok("操作成功！");
     }
 
