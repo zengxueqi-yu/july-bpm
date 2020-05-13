@@ -1,3 +1,4 @@
+var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
 //定义一个区域图类：
 function GooFlow(bgDiv, property) {
     function generateUUID() {
@@ -82,7 +83,6 @@ function GooFlow(bgDiv, property) {
         this.onPrintClick = null;//打印流程图按钮定义
         if (property.headBtns)
             this.$head.on("click", {inthis: this}, function (e) {
-                console.log(e);
                 if (!e) e = window.event;
                 var tar = e.target;
                 if (tar.tagName == "DIV" || tar.tagName == "SPAN") return;
@@ -1155,6 +1155,13 @@ GooFlow.prototype = {
                 $(".shade,.pop_node").hide();
             });
 
+            layer.open({
+                type: 2,
+                content: 'http://fly.layui.com/',
+                area: ['375px', '500px'],
+                maxmin: true
+            });
+
             // 角色弹框  方框按钮角色选择
             $(".shade,.pop_node").show();
             init_node_info(This.$textArea.data("id"));
@@ -1425,6 +1432,7 @@ GooFlow.prototype = {
             this.$nodeData[id].name = name;
             if (this.$nodeData[id].type.indexOf("round") > 1) {
                 this.$nodeDom[id].children(".span").text(name);
+                this.$nodeDom[id].find("td:eq(1)").text(name);
             } else {
                 this.$nodeDom[id].find("td:eq(1)").text(name);
 
